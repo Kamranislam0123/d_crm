@@ -9,7 +9,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 | This file lets you define "hooks" to extend CI without hacking the core
 | files.  Please see the user guide for info:
 |
-|   http://codeigniter.com/user_guide/general/hooks.html
+|   http://codeigniter.com/user_guide/general/hooks.html ttgfttr.php`q 
 |
 */
 
@@ -105,6 +105,8 @@ $hook['post_controller'] = function () {
         }
     }
 };
+
+
 
 if (file_exists(APPPATH . 'config/my_hooks.php')) {
     include_once APPPATH . 'config/my_hooks.php';

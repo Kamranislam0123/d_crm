@@ -7,8 +7,8 @@ $dimensions = $pdf->getPageDimensions();
 $info_right_column = '';
 $info_left_column  = '';
 
-$info_right_column .= '<span style="font-weight:bold;font-size:27px;">' . _l('invoice_pdf_heading') . '</span><br />';
-$info_right_column .= '<b style="color:#4e4e4e;"># ' . $invoice_number . '</b>';
+$info_right_column .= '<br><div style="background-color: orange;color: white;"><span style="font-weight:bold;font-size:27px;">' . $invoice_number . '</span></div><br>';
+//$info_right_column .= '<b style="color:#4e4e4e;"># ' . $invoice_number . '</b>';
 
 if (get_option('show_status_on_pdf_ei') == 1) {
     $info_right_column .= '<br /><span style="color:rgb(' . invoice_status_color_pdf($status) . ');text-transform:uppercase;">' . format_invoice_status($status, '', false) . '</span>';
@@ -18,9 +18,9 @@ if ($status != Invoices_model::STATUS_PAID && $status != Invoices_model::STATUS_
     && found_invoice_mode($payment_modes, $invoice->id, false)) {
     $info_right_column .= ' - <a style="color:#84c529;text-decoration:none;text-transform:uppercase;" href="' . site_url('invoice/' . $invoice->id . '/' . $invoice->hash) . '"><1b>' . _l('view_invoice_pdf_link_pay') . '</1b></a>';
 }
-
 // Add logo
 $info_left_column .= pdf_logo_url();
+
 
 // Write top left logo and right column info/text
 pdf_multi_row($info_left_column, $info_right_column, $pdf, ($dimensions['wk'] / 2) - $dimensions['lm']);
@@ -34,35 +34,33 @@ $organization_info .= format_organization_info();
 $organization_info .= '</div>';
 
 // Bill to
-$invoice_info = '<b>' . _l('invoice_bill_to') . ':</b>';
-$invoice_info .= '<div style="color:#424242;">';
+$invoice_info = '<b style="color:orange;">' . _l('invoice_bill_to') . ':</b><br>';
 $invoice_info .= format_customer_info($invoice, 'invoice', 'billing');
-$invoice_info .= '</div>';
 
 // ship to to
 if ($invoice->include_shipping == 1 && $invoice->show_shipping_on_invoice == 1) {
-    $invoice_info .= '<br /><b>' . _l('ship_to') . ':</b>';
+    $invoice_info .= '<br /><b style="color: orange">' . _l('ship_to') . ':</b>';
     $invoice_info .= '<div style="color:#424242;">';
     $invoice_info .= format_customer_info($invoice, 'invoice', 'shipping');
     $invoice_info .= '</div>';
 }
 
-$invoice_info .= '<br />' . _l('invoice_data_date') . ' ' . _d($invoice->date) . '<br />';
+$invoice_info .= '<br /><b style="color: orange">' . _l('invoice_data_date') . '</b> ' . _d($invoice->date) . '<br />';
 
 $invoice_info = hooks()->apply_filters('invoice_pdf_header_after_date', $invoice_info, $invoice);
 
-if (! empty($invoice->duedate)) {
-    $invoice_info .= _l('invoice_data_duedate') . ' ' . _d($invoice->duedate) . '<br />';
+if (!empty($invoice->duedate)) {
+    $invoice_info .= '<b style="color: orange">'._l('invoice_data_duedate') . '</b> ' . _d($invoice->duedate) . '<br />';
     $invoice_info = hooks()->apply_filters('invoice_pdf_header_after_due_date', $invoice_info, $invoice);
 }
 
-if ($invoice->sale_agent && get_option('show_sale_agent_on_invoices') == 1) {
-    $invoice_info .= _l('sale_agent_string') . ': ' . get_staff_full_name($invoice->sale_agent) . '<br />';
+if ($invoice->sale_agent != 0 && get_option('show_sale_agent_on_invoices') == 1) {
+    $invoice_info .= '<b style="color: orange">'._l('sale_agent_string') . '</b>: ' . get_staff_full_name($invoice->sale_agent) . '<br />';
     $invoice_info = hooks()->apply_filters('invoice_pdf_header_after_sale_agent', $invoice_info, $invoice);
 }
 
-if ($invoice->project_id && get_option('show_project_on_invoice') == 1) {
-    $invoice_info .= _l('project') . ': ' . get_project_name_by_id($invoice->project_id) . '<br />';
+if ($invoice->project_id != 0 && get_option('show_project_on_invoice') == 1) {
+    $invoice_info .= '<b style="color: orange">'._l('project') . '</b>: ' . get_project_name_by_id($invoice->project_id) . '<br />';
     $invoice_info = hooks()->apply_filters('invoice_pdf_header_after_project_name', $invoice_info, $invoice);
 }
 
@@ -89,7 +87,7 @@ pdf_multi_row($left_info, $right_info, $pdf, ($dimensions['wk'] / 2) - $dimensio
 $pdf->Ln(hooks()->apply_filters('pdf_info_and_table_separator', 6));
 
 // The items table
-$items = get_items_table_data($invoice, 'invoice', 'pdf');
+$items = styleflow_get_items_table_data($invoice, 'vorange', 'pdf');
 
 $tblhtml = $items->table();
 
@@ -133,7 +131,7 @@ if ((int) $invoice->adjustment != 0) {
 }
 
 $tbltotal .= '
-<tr style="background-color:#447CBE;">
+<tr style="background-color: orange; color: white">
     <td align="right" width="85%"><strong>' . _l('invoice_total') . '</strong></td>
     <td align="right" width="15%">' . app_format_money($invoice->total, $invoice->currency_name) . '</td>
 </tr>';
@@ -143,11 +141,11 @@ if (count($invoice->payments) > 0 && get_option('show_total_paid_on_invoice') ==
     <tr>
         <td align="right" width="85%"><strong>' . _l('invoice_total_paid') . '</strong></td>
         <td align="right" width="15%">-' . app_format_money(sum_from_table(db_prefix() . 'invoicepaymentrecords', [
-        'field' => 'amount',
-        'where' => [
-            'invoiceid' => $invoice->id,
-        ],
-    ]), $invoice->currency_name) . '</td>
+            'field' => 'amount',
+            'where' => [
+                'invoiceid' => $invoice->id,
+            ],
+        ]), $invoice->currency_name) . '</td>
     </tr>';
 }
 
@@ -160,7 +158,7 @@ if (get_option('show_credits_applied_on_invoice') == 1 && $credits_applied = tot
 }
 
 if (get_option('show_amount_due_on_invoice') == 1 && $invoice->status != Invoices_model::STATUS_CANCELLED) {
-    $tbltotal .= '<tr style="background-color:#e5e7eb;">
+    $tbltotal .= '<tr style="background-color:#f0f0f0;">
        <td align="right" width="85%"><strong>' . _l('invoice_amount_due') . '</strong></td>
        <td align="right" width="15%">' . app_format_money($invoice->total_left_to_pay, $invoice->currency_name) . '</td>
    </tr>';
@@ -186,17 +184,16 @@ if (count($invoice->payments) > 0 && get_option('show_transactions_on_invoice_pd
     $pdf->SetFont($font_name, '', $font_size);
     $pdf->Ln(4);
     $tblhtml = '<table width="100%" bgcolor="#fff" cellspacing="0" cellpadding="5" border="0">
-        <tr height="20"  style="color:#000;border:1px solid #000;">
-        <th width="25%;" style="' . $border . '">' . _l('invoice_payments_table_number_heading') . '</th>
-        <th width="25%;" style="' . $border . '">' . _l('invoice_payments_table_mode_heading') . '</th>
-        <th width="25%;" style="' . $border . '">' . _l('invoice_payments_table_date_heading') . '</th>
-        <th width="25%;" style="' . $border . '">' . _l('invoice_payments_table_amount_heading') . '</th>
+        <tr height="20"  style="color:#000;border:1px solid #f55b00;">
+        <th width="25%;" style="background-color: orange;color: white;' . $border . '">' . _l('invoice_payments_table_number_heading') . '</th>
+        <th width="25%;" style="background-color: orange;color: white;' . $border . '">' . _l('invoice_payments_table_mode_heading') . '</th>
+        <th width="25%;" style="background-color: orange;color: white;' . $border . '">' . _l('invoice_payments_table_date_heading') . '</th>
+        <th width="25%;" style="background-color: orange;color: white;' . $border . '">' . _l('invoice_payments_table_amount_heading') . '</th>
     </tr>';
     $tblhtml .= '<tbody>';
-
     foreach ($invoice->payments as $payment) {
         $payment_name = $payment['name'];
-        if (! empty($payment['paymentmethod'])) {
+        if (!empty($payment['paymentmethod'])) {
             $payment_name .= ' - ' . $payment['paymentmethod'];
         }
         $tblhtml .= '
@@ -221,7 +218,7 @@ if (found_invoice_mode($payment_modes, $invoice->id, true, true)) {
 
     foreach ($payment_modes as $mode) {
         if (is_numeric($mode['id'])) {
-            if (! is_payment_mode_allowed_for_invoice($mode['id'], $invoice->id)) {
+            if (!is_payment_mode_allowed_for_invoice($mode['id'], $invoice->id)) {
                 continue;
             }
         }
@@ -234,7 +231,7 @@ if (found_invoice_mode($payment_modes, $invoice->id, true, true)) {
     }
 }
 
-if (! empty($invoice->clientnote)) {
+if (!empty($invoice->clientnote)) {
     $pdf->Ln(4);
     $pdf->SetFont($font_name, 'B', $font_size);
     $pdf->Cell(0, 0, _l('invoice_note'), 0, 1, 'L', 0, '', 0);
@@ -243,7 +240,7 @@ if (! empty($invoice->clientnote)) {
     $pdf->writeHTMLCell('', '', '', '', $invoice->clientnote, 0, 1, false, true, 'L', true);
 }
 
-if (! empty($invoice->terms)) {
+if (!empty($invoice->terms)) {
     $pdf->Ln(4);
     $pdf->SetFont($font_name, 'B', $font_size);
     $pdf->Cell(0, 0, _l('terms_and_conditions') . ':', 0, 1, 'L', 0, '', 0);
