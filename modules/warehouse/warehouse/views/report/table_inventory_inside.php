@@ -183,4 +183,4 @@ $rResult = $result['rResult'];
 		$output['aaData'][] = $row;
 	}
 
- -->
+ ?>
