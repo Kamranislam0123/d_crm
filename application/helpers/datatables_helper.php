@@ -348,6 +348,7 @@ function render_datatable($headings = [], $class = '', $additional_classes = [''
         $_table_attributes .= $key . '="' . $val . '" ';
     }
 
+
     $table = '<div class="' . $IEfix . '"><table' . $_table_attributes . 'class="dt-table-loading table table-' . $class . '' . $_additional_classes . '">';
     $table .= '<thead>';
     $table .= '<tr>';
@@ -372,6 +373,8 @@ function render_datatable($headings = [], $class = '', $additional_classes = [''
     $table .= '</table></div>';
     echo $table;
 }
+
+    
 
 /**
  * Translated datatables language based on app languages

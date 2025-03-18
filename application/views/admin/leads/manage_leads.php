@@ -218,7 +218,9 @@
                                     $_table_data[] = [
                                         'name'     => _l('gdpr_consent') . ' (' . _l('gdpr_short') . ')',
                                         'th_attrs' => ['id' => 'th-consent', 'class' => 'not-export'],
+                                        
                                     ];
+                                    
                                 }
                                 $_table_data[] = [
                                     'name'     => _l('lead_company'),
@@ -273,6 +275,7 @@
                                     ]);
                                 }
                                 $table_data = hooks()->apply_filters('leads_table_columns', $table_data);
+                                // dd($_table_data);
                                 ?>
                                     <div class="panel-table-full">
                                         <?php

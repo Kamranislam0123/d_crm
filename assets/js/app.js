@@ -935,6 +935,7 @@ function get_datatable_buttons(table) {
             var columns = table_api.columns().visible();
             var columns_total = columns.length;
             var total_visible_columns = 0;
+          
 
             for (i = 0; i < columns_total; i++) {
               // Is only visible column
@@ -996,6 +997,7 @@ function get_datatable_buttons(table) {
       if ($(table).is(b.attr("data-table"))) {
         table_buttons_options.push({
           text: b.text().trim(),
+          
           className: "btn btn-sm btn-default-dt-options",
           action: function (e, dt, node, config) {
             b.click();

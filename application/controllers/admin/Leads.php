@@ -21,7 +21,7 @@ class Leads extends AdminController
     public function index($id = '')
     {
         close_setup_menu();
-
+        // dd("ok");
         if (!is_staff_member()) {
             access_denied('Leads');
         }
@@ -47,7 +47,7 @@ class Leads extends AdminController
         $data['leadid']   = $id;
         $data['isKanBan'] = $this->session->has_userdata('leads_kanban_view') &&
             $this->session->userdata('leads_kanban_view') == 'true';
-
+// dd($data);
         $this->load->view('admin/leads/manage_leads', $data);
     }
 
