@@ -148,7 +148,7 @@
                                     <?= render_input('lastname', 'staff_add_edit_lastname', $value); ?>
                                     <?php $value = (isset($member) ? $member->email : ''); ?>
                                     <?= render_input('email', 'staff_add_edit_email', $value, 'email', ['autocomplete' => 'off']); ?>
-                                    <div class="form-group">
+                                    <!-- <div class="form-group">
                                         <label
                                             for="hourly_rate"><?= _l('staff_hourly_rate'); ?></label>
                                         <div class="input-group">
@@ -159,7 +159,7 @@
                                                 <?= e($base_currency->symbol); ?>
                                             </span>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <?php $value = (isset($member) ? $member->phonenumber : ''); ?>
                                     <?= render_input('phonenumber', 'staff_add_edit_phonenumber', $value); ?>
                                     <div class="form-group">
